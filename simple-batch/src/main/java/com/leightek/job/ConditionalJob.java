@@ -35,7 +35,10 @@ public class ConditionalJob {
 
 	@Bean
 	public Tasklet passTasklet() {
-		return (contribution, context) -> RepeatStatus.FINISHED;
+		return (contribution, context) -> {
+			return RepeatStatus.FINISHED;
+//			throw new RuntimeException("Causing a failure");
+		};
 	}
 
 	@Bean
@@ -58,10 +61,8 @@ public class ConditionalJob {
 	public Job job() {
 		return this.jobBuilderFactory.get("conditionalJob")
 				.start(firstStep())
-				.next(decider())
-				.from(decider())
-				.on("FAILED").to(failureStep())
-				.from(decider())
+				.on("FAILED").end()
+				.from(firstStep())
 				.on("*").to(successStep())
 				.end()
 				.build();
