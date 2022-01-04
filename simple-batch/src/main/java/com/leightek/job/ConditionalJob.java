@@ -61,7 +61,7 @@ public class ConditionalJob {
 	public Job job() {
 		return this.jobBuilderFactory.get("conditionalJob")
 				.start(firstStep())
-				.on("FAILED").fail()
+				.on("FAILED").stopAndRestart(successStep())
 				.from(firstStep())
 				.on("*").to(successStep())
 				.end()
